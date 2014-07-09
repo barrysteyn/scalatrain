@@ -22,4 +22,10 @@ class TrainSpec extends WordSpec with Matchers {
       ice724.stations shouldEqual Vector(munich, nuremberg, frankfurt, cologne)
     }
   }
+
+  "backToBackStations" should {
+    "be initialized correctly" in {
+      ice724.backToBackStations shouldEqual List((munich, nuremberg), (nuremberg, frankfurt), (frankfurt, cologne))
+    }
+  }
 }
