@@ -39,38 +39,38 @@ class JourneyPlanner(trains: Set[Train]) {
     )
 
   //A mapping from Station to hops
-  val departingHops : Map[Station, Set[Hop]] = {
-    	val hops : Set[Hop] = for {
-    	  train <- trains
-    	  backToBack <- train.backToBackStations 
-    	} yield Hop(backToBack._1, backToBack._2, train)
-    	
-    	hops.groupBy (hop => hop.from)
+  val departingHops: Map[Station, Set[Hop]] = {
+    val hops: Set[Hop] = for {
+      train <- trains
+      backToBack <- train.backToBackStations
+    } yield Hop(backToBack._1, backToBack._2, train)
+
+    hops.groupBy(hop => hop.from)
   }
 
   def departingHopsAtTime(departingStation: Station, departingTime: Time): Set[Hop] =
-     departingHops(departingStation) filter (hop => hop.departureTime >= departingTime)
+    departingHops(departingStation) filter (hop => hop.departureTime >= departingTime)
 
   //Sort paths in ascending order
-  def sortPaths(paths : Set[List[Hop]]) = {
+  def sortPaths(paths: Set[List[Hop]]) = {
     val sortedPaths = paths.toVector
-    sortedPaths.sortBy(hop => hop.last.arrivalTime - hop.head.departureTime )
+    sortedPaths.sortBy(hop => hop.last.arrivalTime - hop.head.departureTime)
   }
-  
+
   //Get paths between two stations given a departure time
-  def getPathsAtTime(departureStation : Station, arrivalStation : Station, departureTime : Time) : Set[List[Hop]] = {
+  def getPathsAtTime(departureStation: Station, arrivalStation: Station, departureTime: Time): Set[List[Hop]] = {
     routes(departureStation, arrivalStation, departureTime)
   }
-     
+
   private def routes(departureStation: Station, arrivalStation: Station, departureTime: Time, seenStations: Set[Station] = Set()): Set[List[Hop]] = {
     val departingHops: Set[Hop] = departingHopsAtTime(departureStation, departureTime)
 
     for {
-      hop 	<- 	departingHops if !(seenStations contains hop.to)
-      route <- 	if (hop.to != arrivalStation) 
-    	  			routes(hop.to, arrivalStation, hop.arrivalTime, seenStations + departureStation) 
-    	  		else 
-    	  			Set(List())
+      hop <- departingHops if !(seenStations contains hop.to)
+      route <- if (hop.to != arrivalStation)
+        routes(hop.to, arrivalStation, hop.arrivalTime, seenStations + departureStation)
+      else
+        Set(List())
     } yield hop +: route
   }
 

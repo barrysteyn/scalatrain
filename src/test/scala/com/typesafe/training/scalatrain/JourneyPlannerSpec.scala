@@ -8,6 +8,8 @@ import TestData._
 import java.lang.{ IllegalArgumentException => IAE }
 import org.scalatest.{ Matchers, WordSpec }
 
+import scala.collection.immutable.Seq
+
 class JourneyPlannerSpec extends WordSpec with Matchers {
 
   "stations" should {
@@ -39,6 +41,19 @@ class JourneyPlannerSpec extends WordSpec with Matchers {
       planner.isShortTrip(munich, frankfurt) shouldBe true
       planner.isShortTrip(nuremberg, frankfurt) shouldBe true
       planner.isShortTrip(nuremberg, essen) shouldBe true
+    }
+  }
+
+  "Calculating paths" should {
+    "between two stations" should {
+      planner.getPathsAtTime(munich, nuremberg, ice724MunichTime) shouldEqual Set[List[Hop]](List(hopMunichNuremberg724))
+      planner.getPathsAtTime(munich, nuremberg, ice726MunichTime) shouldEqual Set[List[Hop]](List(hopMunichNuremberg724), List(hopMunichNuremberg726))
+      planner getPathsAtTime (munich, frankfurt, ice726MunichTime) shouldEqual Set[List[Hop]](
+        List(hopMunichNuremberg724, hopNurembergFrankfurt724),
+        List(hopMunichNuremberg726, hopNurembergFrankfurt726),
+        List(hopMunichNuremberg726, hopNurembergFrankfurt724)
+      )
+
     }
   }
 
