@@ -53,8 +53,33 @@ class JourneyPlannerSpec extends WordSpec with Matchers {
         List(hopMunichNuremberg726, hopNurembergFrankfurt726),
         List(hopMunichNuremberg726, hopNurembergFrankfurt724)
       )
-
     }
   }
 
+  "departingHopsAtTime" should {
+    "return a set of hops for a given station, as long as there are trains leaving at or later than the departure time" in {
+      planner.departingHopsAtTime(nuremberg, Time(9)) should contain(hopNurembergFrankfurt726)
+      planner.departingHopsAtTime(nuremberg, Time(9)) should contain(hopNurembergFrankfurt724)
+    }
+  }
+
+  "sortPaths" should {
+    "sort paths by total time in ascending order" in {
+      val sortedPaths = planner.sortPaths(planner getPathsAtTime (munich, frankfurt, ice726MunichTime))
+      val possibleSortedPaths = List(
+        Vector(
+          List(hopMunichNuremberg724, hopNurembergFrankfurt724),
+          List(hopMunichNuremberg726, hopNurembergFrankfurt726),
+          List(hopMunichNuremberg726, hopNurembergFrankfurt724)
+
+        ),
+        Vector(
+          List(hopMunichNuremberg726, hopNurembergFrankfurt726),
+          List(hopMunichNuremberg724, hopNurembergFrankfurt724),
+          List(hopMunichNuremberg726, hopNurembergFrankfurt724)
+        )
+      )
+      possibleSortedPaths should contain(sortedPaths)
+    }
+  }
 }
