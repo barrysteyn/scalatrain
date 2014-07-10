@@ -54,6 +54,10 @@ class JourneyPlannerSpec extends WordSpec with Matchers {
         List(hopMunichNuremberg726, hopNurembergFrankfurt724)
       )
 
+  "departingHopsAtTime" should {
+    "return a set of hops for a given station, as long as there are trains leaving at or later than the departure time" in {
+      planner.departingHopsAtTime(nuremberg, Time(9)) should contain(Hop(nuremberg, frankfurt, ice726))
+      planner.departingHopsAtTime(nuremberg, Time(9)) should contain(Hop(nuremberg, frankfurt, ice724))
     }
   }
 
