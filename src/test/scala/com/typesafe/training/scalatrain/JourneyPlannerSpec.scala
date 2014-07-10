@@ -60,5 +60,4 @@ class JourneyPlannerSpec extends WordSpec with Matchers {
       planner.departingHopsAtTime(nuremberg, Time(9)) should contain(Hop(nuremberg, frankfurt, ice724))
     }
   }
-
 }
