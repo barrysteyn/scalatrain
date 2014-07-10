@@ -3,11 +3,14 @@
  */
 
 package com.typesafe.training.scalatrain
+import scala.collection.mutable.TreeSet
 
 case class Hop(from: Station, to: Station, train: Train) {
   val departureTime = train departureTime from
   val arrivalTime = train departureTime to
 }
+
+//case class Path(pathList)
 
 class JourneyPlanner(trains: Set[Train]) {
 
@@ -48,7 +51,18 @@ class JourneyPlanner(trains: Set[Train]) {
   def departingHopsAtTime(departingStation: Station, departingTime: Time): Set[Hop] =
      departingHops(departingStation) filter (hop => hop.departureTime >= departingTime)
 
-  def routes(departureStation: Station, arrivalStation: Station, departureTime: Time, seenStations: Set[Station] = Set()): Set[List[Hop]] = {
+  //Sort paths in ascending order
+  def sortPaths(paths : Set[List[Hop]]) = {
+    val sortedPaths = paths.toVector
+    sortedPaths.sortBy(hop => hop.last.arrivalTime - hop.head.departureTime )
+  }
+  
+  //Get paths between two stations given a departure time
+  def getPathsAtTime(departureStation : Station, arrivalStation : Station, departureTime : Time) : Set[List[Hop]] = {
+    routes(departureStation, arrivalStation, departureTime)
+  }
+     
+  private def routes(departureStation: Station, arrivalStation: Station, departureTime: Time, seenStations: Set[Station] = Set()): Set[List[Hop]] = {
     val departingHops: Set[Hop] = departingHopsAtTime(departureStation, departureTime)
 
     for {
