@@ -5,15 +5,17 @@
 package com.typesafe.training.scalatrain
 import scala.collection.mutable.TreeSet
 
-case class Hop(from: Station, to: Station, train: Train) {
+case class Hop(from: Station, to: Station, train: Train, cost : Int = 0) {
   val departureTime = train departureTime from
   val arrivalTime = train departureTime to
+  
+  override def toString : String = "($from -> $to)"
 }
 
 //case class Path(pathList)
 
 class JourneyPlanner(trains: Set[Train]) {
-
+  
   val stations: Set[Station] =
     // Could also be expressed in short notation: trains flatMap (_.stations)
     trains flatMap (train => train.stations)
@@ -25,7 +27,7 @@ class JourneyPlanner(trains: Set[Train]) {
   def stopsAt(station: Station): Set[(Time, Train)] =
     for {
       train <- trains
-      (time, `station`) <- train.schedule
+      (time, `station`) <- train.schedule.timeTable
     } yield (time, train)
 
   //Tests whether the trip is considered short  
@@ -38,6 +40,9 @@ class JourneyPlanner(trains: Set[Train]) {
       }
     )
 
+ // def trainSchedule(date : java.util.Date) : Set[Train]
+    
+    
   //A mapping from Station to hops
   val departingHops: Map[Station, Set[Hop]] = {
     val hops: Set[Hop] = for {
@@ -45,22 +50,33 @@ class JourneyPlanner(trains: Set[Train]) {
       backToBack <- train.backToBackStations
     } yield Hop(backToBack._1, backToBack._2, train)
 
-    hops.groupBy(hop => hop.from)
+    hops groupBy(_.from)
   }
 
   def departingHopsAtTime(departingStation: Station, departingTime: Time): Set[Hop] =
     departingHops(departingStation) filter (hop => hop.departureTime >= departingTime)
 
-  //Sort paths in ascending order
-  def sortPaths(paths: Set[List[Hop]]) = {
-    val sortedPaths = paths.toVector
-    sortedPaths.sortBy(hop => hop.last.arrivalTime - hop.head.departureTime)
-  }
+  //Sort paths in ascending order via time
+  def sortPathsByTime(paths: Set[List[Hop]]) = 
+  	paths.toVector.sortBy(hop => hop.last.arrivalTime - hop.head.departureTime)
 
-  //Get paths between two stations given a departure time
-  def getPathsAtTime(departureStation: Station, arrivalStation: Station, departureTime: Time): Set[List[Hop]] = {
-    routes(departureStation, arrivalStation, departureTime)
+  //Sort paths in ascending order via cost
+  def sortPathsByCost(paths: Set[List[Hop]]) = {
+    	//Creates a list of tuples of, each tuple being (cost, List[Hop])
+    	val costPath = for {
+    	  path <- paths.toList
+    	  cost = path.foldLeft(0)(_ + _.cost)
+    	} yield (cost, path)
+    	
+    	//Returns a vector of List[Hop], sorted by total cost
+    	for {
+    	  cp <- costPath.groupBy(_._1).toVector.sortBy(_._1)
+    	} yield cp._2
   }
+  
+  //Get paths between two stations given a departure time
+  def getPathsAtTime(departureStation: Station, arrivalStation: Station, departureTime: Time): Set[List[Hop]] =
+    routes(departureStation, arrivalStation, departureTime)
 
   private def routes(departureStation: Station, arrivalStation: Station, departureTime: Time, seenStations: Set[Station] = Set()): Set[List[Hop]] = {
     val departingHops: Set[Hop] = departingHopsAtTime(departureStation, departureTime)

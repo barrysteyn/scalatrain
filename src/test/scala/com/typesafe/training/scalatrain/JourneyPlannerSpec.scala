@@ -65,7 +65,7 @@ class JourneyPlannerSpec extends WordSpec with Matchers {
 
   "sortPaths" should {
     "sort paths by total time in ascending order" in {
-      val sortedPaths = planner.sortPaths(planner getPathsAtTime (munich, frankfurt, ice726MunichTime))
+      val sortedPaths = planner.sortPathsByTime(planner getPathsAtTime (munich, frankfurt, ice726MunichTime))
       val possibleSortedPaths = List(
         Vector(
           List(hopMunichNuremberg724, hopNurembergFrankfurt724),
@@ -80,6 +80,10 @@ class JourneyPlannerSpec extends WordSpec with Matchers {
         )
       )
       possibleSortedPaths should contain(sortedPaths)
+    }
+    
+    "sort paths by total cost in ascending order" in {
+      
     }
   }
 }

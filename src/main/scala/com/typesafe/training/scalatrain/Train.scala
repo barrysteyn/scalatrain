@@ -7,21 +7,28 @@ package com.typesafe.training.scalatrain
 import scala.collection.immutable.Seq
 
 sealed abstract class TrainInfo {
-
+  
   def number: Int
 }
 
-case class Train(info: TrainInfo, schedule: Seq[(Time, Station)]) {
+sealed case class Schedule(timeTable : Seq[(Time, Station)], day : String = "All", exceptions : Set[java.util.Date] = Set()) {
+  //TODO add requires that ensures days are valid (e.g. Mon, Tue etc)	
+  def size : Int = timeTable.size
+}
+
+case class Train(info: TrainInfo, schedule: Schedule) {
   require(schedule.size >= 2, "schedule must contain at least two elements")
 
   val stations: Seq[Station] =
-    schedule map (trainAndStation => trainAndStation._2)
+    schedule.timeTable map (trainAndStation => trainAndStation._2)
 
   val departureTime: Map[Station, Time] =
-    schedule map (timeStation => timeStation.swap)toMap
+    schedule.timeTable map (timeStation => timeStation.swap)toMap
 
   val backToBackStations: List[(Station, Station)] =
     stations zip stations.tail toList
+  
+  override def toString() : String = "$info.number"
 }
 
 object TrainInfo {
