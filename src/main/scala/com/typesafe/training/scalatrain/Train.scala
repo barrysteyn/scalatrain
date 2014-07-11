@@ -55,7 +55,7 @@ case class Train(info: TrainInfo, schedule: Schedule) {
   val backToBackStations: List[(Station, Station)] =
     stations zip stations.tail toList
 
-  override def toString(): String = "$info.number"
+  override def toString(): String = s"$info.number"
 }
 
 object TrainInfo {

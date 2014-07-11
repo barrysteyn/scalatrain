@@ -46,10 +46,10 @@ object TestData {
 
   val ice726schedule = Schedule(
     Vector(
-      ice724MunichTime -> munich,
-      ice724NurembergTime -> nuremberg,
-      ice724FrankfurtTime -> frankfurt,
-      ice724CologneTime -> cologne
+      ice726MunichTime -> munich,
+      ice726NurembergTime -> nuremberg,
+      ice726FrankfurtTime -> frankfurt,
+      ice726CologneTime -> essen
     ),
     WeekDays.All,
     Set(new Date(2014, 12, 12))
