@@ -9,6 +9,7 @@ import java.lang.{ IllegalArgumentException => IAE }
 import org.scalatest.{ Matchers, WordSpec }
 
 import scala.collection.immutable.Seq
+import java.util.Date
 
 class JourneyPlannerSpec extends WordSpec with Matchers {
 
@@ -45,7 +46,7 @@ class JourneyPlannerSpec extends WordSpec with Matchers {
   }
 
   "Calculating paths" should {
-    "between two stations" should {
+    "between two stations at a certain time" should {
       planner.getPathsAtTime(munich, nuremberg, ice724MunichTime) shouldEqual Set(Path(List(hopMunichNuremberg724)))
       planner.getPathsAtTime(munich, nuremberg, ice726MunichTime) shouldEqual Set(Path(List(hopMunichNuremberg724)), Path(List(hopMunichNuremberg726)))
       planner getPathsAtTime (munich, frankfurt, ice726MunichTime) shouldEqual Set(
@@ -53,6 +54,16 @@ class JourneyPlannerSpec extends WordSpec with Matchers {
         Path(List(hopMunichNuremberg726, hopNurembergFrankfurt726)),
         Path(List(hopMunichNuremberg726, hopNurembergFrankfurt724))
       )
+    }
+
+    "between two stations at a certain date" should {
+      planner.getPathsAtDate(munich, nuremberg, new Date(2010, 10, 4)) shouldEqual Set(Path(List(hopMunichNuremberg724)), Path(List(hopMunichNuremberg726)))
+      planner.getPathsAtDate(munich, nuremberg, new Date(2010, 10, 3)) shouldEqual Set(Path(List(hopMunichNuremberg726)))
+      /*planner getPathsAtTime (munich, frankfurt, ice726MunichTime) shouldEqual Set(
+        Path(List(hopMunichNuremberg724, hopNurembergFrankfurt724)),
+        Path(List(hopMunichNuremberg726, hopNurembergFrankfurt726)),
+        Path(List(hopMunichNuremberg726, hopNurembergFrankfurt724))
+      )*/
     }
   }
 
@@ -83,6 +94,16 @@ class JourneyPlannerSpec extends WordSpec with Matchers {
 
     "sort paths by total cost in ascending order" in {
 
+    }
+  }
+
+  "trains for date" should {
+    "2014-11-11" should {
+      planner.getTrainsForDate(new Date(2014, 11, 11)) shouldEqual Set(ice726)
+    }
+
+    "2014-12-12" should {
+      planner.getTrainsForDate(new Date(2014, 12, 12)) shouldEqual Set()
     }
   }
 }

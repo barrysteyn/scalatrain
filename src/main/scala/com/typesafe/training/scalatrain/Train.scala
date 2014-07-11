@@ -5,7 +5,6 @@
 package com.typesafe.training.scalatrain
 
 import scala.collection.immutable.Seq
-import com.typesafe.training.scalatrain.WeekDays.WeekDay
 
 import java.util.{ Calendar, Date }
 
@@ -17,35 +16,37 @@ sealed abstract class TrainInfo {
 object WeekDays extends Enumeration {
   type WeekDay = Value
   val Mon, Tue, Wed, Thu, Fri, Sat, Sun, All = Value
-  def intToWeekDay(dow: Int): WeekDay = {
-    require(dow >= 1 && dow <= 7, "Invalid day of week")
-    dow match {
-      case 1 => Sun
-      case 2 => Mon
-      case 3 => Tue
-      case 4 => Wed
-      case 5 => Thu
-      case 6 => Fri
-      case 7 => Sat
+  val calendar = Calendar.getInstance()
+
+  def intToWeekDay(date: Date): WeekDay = {
+    calendar.setTime(date)
+    val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+    dayOfWeek match {
+      case 5 => Sun
+      case 6 => Mon
+      case 7 => Tue
+      case 1 => Wed
+      case 2 => Thu
+      case 3 => Fri
+      case 4 => Sat
     }
   }
 }
 
-sealed case class Schedule(timeTable: Seq[(Time, Station)], day: WeekDay = WeekDays.All, exceptions: Set[Date] = Set()) {
+sealed case class Schedule(timeTable: Seq[(Time, Station)], day: WeekDays.Value = WeekDays.All, exceptions: Set[Date] = Set()) {
   def size: Int = timeTable.size
   def validForDate(date: Date): Boolean = {
-    val calendar = Calendar.getInstance()
-    calendar.setTime(date)
-    val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-    if (day != WeekDays.All && day != WeekDays.intToWeekDay(dayOfWeek)) false
+    if (day != WeekDays.All && day != WeekDays.intToWeekDay(date)) false
     else if (exceptions contains date) false
     else true
   }
 }
 
-case class Train(info: TrainInfo, schedule: Schedule) {
+case class Train(info: TrainInfo, schedule: Schedule, cost : Double) {
   require(schedule.size >= 2, "schedule must contain at least two elements")
-
+ 
+  val costPerHop : Double = cost/schedule.size
+  
   val stations: Seq[Station] =
     schedule.timeTable map (trainAndStation => trainAndStation._2)
 

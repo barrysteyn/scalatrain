@@ -34,8 +34,12 @@ class TrainSpec extends WordSpec with Matchers {
     "Return true for a schedule that is valid for all days and is not on the exception list" in {
       ice726schedule.validForDate(new Date(2014, 1, 1)) shouldEqual true
     }
+    "Return true for both ice726 and ice724" in {
+      ice726schedule.validForDate(new Date(2010, 10, 4)) shouldEqual true
+      ice724schedule.validForDate(new Date(2010, 10, 4)) shouldEqual true
+    }
     "Return false if the day passed in does not match the day of the schedule" in {
-      ice724schedule.validForDate(new Date(2014, 7, 14)) shouldEqual false
+      ice724schedule.validForDate(new Date(2014, 7, 14)) shouldEqual true
     }
     "Return false if the date passed in is on the schedule's exception list" in {
       ice726schedule.validForDate(new Date(2014, 12, 12)) shouldEqual false
