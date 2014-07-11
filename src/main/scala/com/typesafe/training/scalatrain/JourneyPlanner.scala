@@ -6,7 +6,9 @@ package com.typesafe.training.scalatrain
 import scala.collection.mutable.TreeSet
 
 sealed case class Path(hops: List[Hop]) {
-  val totalCost = hops.foldLeft(0)((acc : Int, hop : Hop) => acc + hop.cost)
+  val totalCost = hops.foldLeft(0)((acc: Int, hop: Hop) => acc + hop.cost)
+  val train: Train = hops.head.train
+  val timeTable: Seq[(Time, Station)] = train.schedule.timeTable
 }
 
 case class Hop(from: Station, to: Station, train: Train, cost: Int = 0) {
@@ -63,20 +65,6 @@ class JourneyPlanner(trains: Set[Train]) {
 
   def sortPathsByCost(paths: Set[Path]) =
     paths.toList.sortBy(path => path.totalCost)
-
-  //Sort paths in ascending order via cost
-  def sortPathsByCost(paths: Set[List[Hop]]) = {
-    //Creates a list of tuples of, each tuple being (cost, List[Hop])
-    val costPath = for {
-      path <- paths.toList
-      cost = path.foldLeft(0)((acc: Int, hop: Hop) => acc + hop.cost)
-    } yield (cost, path)
-
-    //Returns a vector of List[Hop], sorted by total cost
-    for {
-      cp <- costPath.groupBy(_._1).toVector.sortBy(_._1)
-    } yield cp._2
-  }
 
   //Get paths between two stations given a departure time
   def getPathsAtTime(departureStation: Station, arrivalStation: Station, departureTime: Time): Set[Path] =

@@ -46,12 +46,12 @@ class JourneyPlannerSpec extends WordSpec with Matchers {
 
   "Calculating paths" should {
     "between two stations" should {
-      planner.getPathsAtTime(munich, nuremberg, ice724MunichTime) shouldEqual Set[List[Hop]](List(hopMunichNuremberg724))
-      planner.getPathsAtTime(munich, nuremberg, ice726MunichTime) shouldEqual Set[List[Hop]](List(hopMunichNuremberg724), List(hopMunichNuremberg726))
-      planner getPathsAtTime (munich, frankfurt, ice726MunichTime) shouldEqual Set[List[Hop]](
-        List(hopMunichNuremberg724, hopNurembergFrankfurt724),
-        List(hopMunichNuremberg726, hopNurembergFrankfurt726),
-        List(hopMunichNuremberg726, hopNurembergFrankfurt724)
+      planner.getPathsAtTime(munich, nuremberg, ice724MunichTime) shouldEqual Set(Path(List(hopMunichNuremberg724)))
+      planner.getPathsAtTime(munich, nuremberg, ice726MunichTime) shouldEqual Set(Path(List(hopMunichNuremberg724)), Path(List(hopMunichNuremberg726)))
+      planner getPathsAtTime (munich, frankfurt, ice726MunichTime) shouldEqual Set(
+        Path(List(hopMunichNuremberg724, hopNurembergFrankfurt724)),
+        Path(List(hopMunichNuremberg726, hopNurembergFrankfurt726)),
+        Path(List(hopMunichNuremberg726, hopNurembergFrankfurt724))
       )
     }
   }
@@ -68,15 +68,15 @@ class JourneyPlannerSpec extends WordSpec with Matchers {
       val sortedPaths = planner.sortPathsByTime(planner getPathsAtTime (munich, frankfurt, ice726MunichTime))
       val possibleSortedPaths = List(
         Vector(
-          List(hopMunichNuremberg724, hopNurembergFrankfurt724),
-          List(hopMunichNuremberg726, hopNurembergFrankfurt726),
-          List(hopMunichNuremberg726, hopNurembergFrankfurt724)
+          Path(List(hopMunichNuremberg724, hopNurembergFrankfurt724)),
+          Path(List(hopMunichNuremberg726, hopNurembergFrankfurt726)),
+          Path(List(hopMunichNuremberg726, hopNurembergFrankfurt724))
 
         ),
         Vector(
-          List(hopMunichNuremberg726, hopNurembergFrankfurt726),
-          List(hopMunichNuremberg724, hopNurembergFrankfurt724),
-          List(hopMunichNuremberg726, hopNurembergFrankfurt724)
+          Path(List(hopMunichNuremberg726, hopNurembergFrankfurt726)),
+          Path(List(hopMunichNuremberg724, hopNurembergFrankfurt724)),
+          Path(List(hopMunichNuremberg726, hopNurembergFrankfurt724))
         )
       )
       possibleSortedPaths should contain(sortedPaths)

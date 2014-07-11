@@ -5,14 +5,19 @@
 package com.typesafe.training.scalatrain
 
 import scala.collection.immutable.Seq
+import com.typesafe.training.scalatrain.WeekDays.WeekDay
 
 sealed abstract class TrainInfo {
 
   def number: Int
 }
 
-sealed case class Schedule(timeTable: Seq[(Time, Station)], day: String = "All", exceptions: Set[java.util.Date] = Set()) {
-  //TODO add requires that ensures days are valid (e.g. Mon, Tue etc)	
+object WeekDays extends Enumeration {
+  type WeekDay = Value
+  val Mon, Tue, Wed, Thu, Fri, Sat, Sun, All = Value
+}
+
+sealed case class Schedule(timeTable: Seq[(Time, Station)], day: WeekDay = WeekDays.All, exceptions: Set[java.util.Date] = Set()) {
   def size: Int = timeTable.size
 }
 
