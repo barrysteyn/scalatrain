@@ -21,8 +21,6 @@ case class Hop(from: Station, to: Station, train: Train, hopCost: Option[Double]
   override def toString: String = s"($from -> $to)"
 }
 
-//case class Path(pathList)
-
 class JourneyPlanner(trains: Set[Train]) {
 
   val stations: Set[Station] =
@@ -59,13 +57,21 @@ class JourneyPlanner(trains: Set[Train]) {
     hops groupBy (_.from)
   }
 
+  //Gets the sink stations
+  def getSinkStations() : Set[Station] = {
+    val backToBack = trains.flatMap(train => train.backToBackStations).toMap
+    backToBack.values.filter(b2b => backToBack.exists(_._1 == b2b)).toSet
+  }
+    
+  //Hops departing at a certain time
   def departingHopsAtTime(departingStation: Station, departingTime: Time): Set[Hop] =
     departingHops(departingStation) filter (hop => hop.departureTime >= departingTime)
 
   //Sort paths in ascending order via time
   def sortPathsByTime(paths: Set[Path]): List[Path] =
     paths.toList.sortBy(path => path.hops.last.arrivalTime - path.hops.head.departureTime)
-
+    
+  //Sort path by cost
   def sortPathsByCost(paths: Set[Path]): List[Path] =
     paths.toList.sortBy(path => path.totalCost)
 
@@ -77,10 +83,11 @@ class JourneyPlanner(trains: Set[Train]) {
     else if (daysDiff > 1) path.totalCost * 1.5
     else path.totalCost * 0.75
   }
-
+  
   def getTrainsForDate(date: java.util.Date): Set[Train] =
     trains filter (train => train.schedule.validForDate(date))
 
+  //Get paths that are valid on a certain date
   def getPathsAtDate(departureStation: Station, arrivalStation: Station, date: Date): Set[Path] =
     getPathsAtTime(departureStation, arrivalStation, Time(0, 0)) filter (path => path.validForDate(date))
 
@@ -88,6 +95,7 @@ class JourneyPlanner(trains: Set[Train]) {
   def getPathsAtTime(departureStation: Station, arrivalStation: Station, departureTime: Time): Set[Path] =
     routes(departureStation, arrivalStation, departureTime) map (listHop => Path(listHop))
 
+  //Graph traversal
   private def routes(departureStation: Station, arrivalStation: Station, departureTime: Time, seenStations: Set[Station] = Set()): Set[List[Hop]] = {
     val departingHops: Set[Hop] = departingHopsAtTime(departureStation, departureTime)
 
@@ -99,5 +107,4 @@ class JourneyPlanner(trains: Set[Train]) {
         Set(List())
     } yield hop +: route
   }
-
 }
