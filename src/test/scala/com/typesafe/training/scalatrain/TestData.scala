@@ -55,14 +55,19 @@ object TestData {
     Set(new Date(2014, 12, 12))
   )
 
-  val ice724 = Train(TrainInfo.InterCityExpress(724), ice724schedule)
+  val ice724 = Train(TrainInfo.InterCityExpress(724), ice724schedule, 100)
 
-  val ice726 = Train(TrainInfo.InterCityExpress(726), ice726schedule)
+  val ice726 = Train(TrainInfo.InterCityExpress(726), ice726schedule, 200)
 
   val hopMunichNuremberg724 = Hop(munich, nuremberg, ice724)
   val hopNurembergFrankfurt724 = Hop(nuremberg, frankfurt, ice724)
+  val hopFrankfurtCologne724 = Hop(frankfurt, cologne, ice724)
   val hopMunichNuremberg726 = Hop(munich, nuremberg, ice726)
   val hopNurembergFrankfurt726 = Hop(nuremberg, frankfurt, ice726)
+  val hopFrankfurtEssen726 = Hop(frankfurt, essen, ice726)
+
+  val ice724path = Path(List(hopMunichNuremberg724, hopNurembergFrankfurt724, hopFrankfurtCologne724))
+  val ice726path = Path(List(hopMunichNuremberg726, hopNurembergFrankfurt726, hopFrankfurtEssen726))
 
   val planner = new JourneyPlanner(Set(ice724, ice726))
 }

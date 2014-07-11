@@ -9,7 +9,7 @@ import java.lang.{ IllegalArgumentException => IAE }
 import org.scalatest.{ Matchers, WordSpec }
 
 import scala.collection.immutable.Seq
-import java.util.Date
+import java.util.{ Calendar, Date }
 
 class JourneyPlannerSpec extends WordSpec with Matchers {
 
@@ -104,6 +104,27 @@ class JourneyPlannerSpec extends WordSpec with Matchers {
 
     "2014-12-12" should {
       planner.getTrainsForDate(new Date(2014, 12, 12)) shouldEqual Set()
+    }
+  }
+
+  "getPathCostOnDate" should {
+    "return the path cost if the date is more than two weeks away" in {
+      val cal = Calendar.getInstance()
+      cal.setTime(new Date())
+      cal.add(Calendar.DATE, 15)
+      planner.getPathCostOnDate(ice724path, cal getTime) shouldEqual ice724.cost
+    }
+    "return 1.5x the path cost if it's more than a day away but less than two weeks" in {
+      val cal = Calendar.getInstance()
+      cal.setTime(new Date())
+      cal.add(Calendar.DATE, 3)
+      planner.getPathCostOnDate(ice724path, cal getTime) shouldEqual ice724.cost * 1.5
+    }
+    "return 0.75x the path cost if it's less than a day away" in {
+      val cal = Calendar.getInstance()
+      cal.setTime(new Date())
+      cal.add(Calendar.HOUR, 12)
+      planner.getPathCostOnDate(ice724path, cal getTime) shouldEqual ice724.cost * 0.75
     }
   }
 }
