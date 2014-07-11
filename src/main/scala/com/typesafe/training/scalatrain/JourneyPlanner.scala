@@ -15,7 +15,7 @@ case class Hop(from: Station, to: Station, train: Train, cost: Int = 0) {
   val departureTime = train departureTime from
   val arrivalTime = train departureTime to
 
-  override def toString: String = "($from -> $to)"
+  override def toString: String = s"($from -> $to)"
 }
 
 //case class Path(pathList)
