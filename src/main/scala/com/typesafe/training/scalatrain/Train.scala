@@ -42,11 +42,11 @@ sealed case class Schedule(timeTable: Seq[(Time, Station)], day: WeekDays.Value 
   }
 }
 
-case class Train(info: TrainInfo, schedule: Schedule, cost : Double) {
+case class Train(info: TrainInfo, schedule: Schedule, cost: Double) {
   require(schedule.size >= 2, "schedule must contain at least two elements")
- 
-  val costPerHop : Double = cost/schedule.size
-  
+
+  val costPerHop: Double = cost / schedule.size
+
   val stations: Seq[Station] =
     schedule.timeTable map (trainAndStation => trainAndStation._2)
 

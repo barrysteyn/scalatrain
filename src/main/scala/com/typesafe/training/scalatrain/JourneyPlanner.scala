@@ -4,16 +4,16 @@
 
 package com.typesafe.training.scalatrain
 import scala.collection.mutable.TreeSet
-import java.util.Date
+import java.util.{ Calendar, Date }
 
 sealed case class Path(hops: List[Hop]) {
   val totalCost = hops.foldLeft(0.0)((acc: Double, hop: Hop) => acc + hop.cost)
   val train: Train = hops.head.train
   val timeTable: Seq[(Time, Station)] = train.schedule.timeTable
-  def validForDate(date : Date) : Boolean = train.schedule.validForDate(date)
+  def validForDate(date: Date): Boolean = train.schedule.validForDate(date)
 }
 
-case class Hop(from: Station, to: Station, train: Train, hopCost : Option[Double] = None) {
+case class Hop(from: Station, to: Station, train: Train, hopCost: Option[Double] = None) {
   val cost = hopCost.getOrElse(train.costPerHop)
   val departureTime = train departureTime from
   val arrivalTime = train departureTime to
@@ -68,6 +68,15 @@ class JourneyPlanner(trains: Set[Train]) {
 
   def sortPathsByCost(paths: Set[Path]): List[Path] =
     paths.toList.sortBy(path => path.totalCost)
+
+  def getPathCostOnDate(path: Path, date: Date): Double = {
+    val now = new Date()
+    require(date.after(now), "Booking date must be later than current date")
+    val daysDiff: Long = (date.getTime - now.getTime) / 1000 / 60 / 60 / 24
+    if (daysDiff > 14) path.totalCost
+    else if (daysDiff > 1) path.totalCost * 1.5
+    else path.totalCost * 0.75
+  }
 
   def getTrainsForDate(date: java.util.Date): Set[Train] =
     trains filter (train => train.schedule.validForDate(date))
