@@ -7,6 +7,8 @@ package com.typesafe.training.scalatrain
 import scala.collection.immutable.Seq
 import com.typesafe.training.scalatrain.WeekDays.WeekDay
 
+import java.util.{ Calendar, Date }
+
 sealed abstract class TrainInfo {
 
   def number: Int
@@ -15,10 +17,30 @@ sealed abstract class TrainInfo {
 object WeekDays extends Enumeration {
   type WeekDay = Value
   val Mon, Tue, Wed, Thu, Fri, Sat, Sun, All = Value
+  def intToWeekDay(dow: Int): WeekDay = {
+    require(dow >= 1 && dow <= 7, "Invalid day of week")
+    dow match {
+      case 1 => Sun
+      case 2 => Mon
+      case 3 => Tue
+      case 4 => Wed
+      case 5 => Thu
+      case 6 => Fri
+      case 7 => Sat
+    }
+  }
 }
 
-sealed case class Schedule(timeTable: Seq[(Time, Station)], day: WeekDay = WeekDays.All, exceptions: Set[java.util.Date] = Set()) {
+sealed case class Schedule(timeTable: Seq[(Time, Station)], day: WeekDay = WeekDays.All, exceptions: Set[Date] = Set()) {
   def size: Int = timeTable.size
+  def validForDate(date: Date): Boolean = {
+    val calendar = Calendar.getInstance()
+    calendar.setTime(date)
+    val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+    if (day != WeekDays.All && day != WeekDays.intToWeekDay(dayOfWeek)) false
+    else if (exceptions contains date) false
+    else true
+  }
 }
 
 case class Train(info: TrainInfo, schedule: Schedule) {

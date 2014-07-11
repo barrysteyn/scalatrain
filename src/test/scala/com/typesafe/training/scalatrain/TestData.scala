@@ -3,6 +3,7 @@
  */
 
 package com.typesafe.training.scalatrain
+import java.util.{ Calendar, Date }
 
 object TestData {
 
@@ -32,29 +33,31 @@ object TestData {
 
   val ice726CologneTime = Time(13, 2)
 
-  val ice724 = Train(
-    TrainInfo.InterCityExpress(724),
-    Schedule(
-      Vector(
-        ice724MunichTime -> munich,
-        ice724NurembergTime -> nuremberg,
-        ice724FrankfurtTime -> frankfurt,
-        ice724CologneTime -> cologne
-      )
-    )
+  val ice724schedule = Schedule(
+    Vector(
+      ice724MunichTime -> munich,
+      ice724NurembergTime -> nuremberg,
+      ice724FrankfurtTime -> frankfurt,
+      ice724CologneTime -> cologne
+    ),
+    WeekDays.Mon,
+    Set(new Date(2014, 11, 11))
   )
 
-  val ice726 = Train(
-    TrainInfo.InterCityExpress(726),
-    Schedule(
-      Vector(
-        ice726MunichTime -> munich,
-        ice726NurembergTime -> nuremberg,
-        ice726FrankfurtTime -> frankfurt,
-        ice726CologneTime -> essen
-      )
-    )
+  val ice726schedule = Schedule(
+    Vector(
+      ice724MunichTime -> munich,
+      ice724NurembergTime -> nuremberg,
+      ice724FrankfurtTime -> frankfurt,
+      ice724CologneTime -> cologne
+    ),
+    WeekDays.All,
+    Set(new Date(2014, 12, 12))
   )
+
+  val ice724 = Train(TrainInfo.InterCityExpress(724), ice724schedule)
+
+  val ice726 = Train(TrainInfo.InterCityExpress(726), ice726schedule)
 
   val hopMunichNuremberg724 = Hop(munich, nuremberg, ice724)
   val hopNurembergFrankfurt724 = Hop(nuremberg, frankfurt, ice724)

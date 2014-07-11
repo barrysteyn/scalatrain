@@ -60,10 +60,10 @@ class JourneyPlanner(trains: Set[Train]) {
     departingHops(departingStation) filter (hop => hop.departureTime >= departingTime)
 
   //Sort paths in ascending order via time
-  def sortPathsByTime(paths: Set[Path]) =
+  def sortPathsByTime(paths: Set[Path]): List[Path] =
     paths.toList.sortBy(path => path.hops.last.arrivalTime - path.hops.head.departureTime)
 
-  def sortPathsByCost(paths: Set[Path]) =
+  def sortPathsByCost(paths: Set[Path]): List[Path] =
     paths.toList.sortBy(path => path.totalCost)
 
   //Get paths between two stations given a departure time
