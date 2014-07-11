@@ -12,8 +12,8 @@ class TrainSpec extends WordSpec with Matchers {
 
   "Creating a Train" should {
     "throw an IllegalArgumentException for a schedule with 0 or 1 elements" in {
-      an[IAE] should be thrownBy Train(TrainInfo.InterCityExpress(724), Vector())
-      an[IAE] should be thrownBy Train(TrainInfo.InterCityExpress(724), Vector(ice724MunichTime -> munich))
+      an[IAE] should be thrownBy Train(TrainInfo.InterCityExpress(724), Schedule(Vector()))
+      an[IAE] should be thrownBy Train(TrainInfo.InterCityExpress(724), Schedule(Vector(ice724MunichTime -> munich)))
     }
   }
 

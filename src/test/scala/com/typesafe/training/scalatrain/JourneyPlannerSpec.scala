@@ -81,9 +81,9 @@ class JourneyPlannerSpec extends WordSpec with Matchers {
       )
       possibleSortedPaths should contain(sortedPaths)
     }
-    
+
     "sort paths by total cost in ascending order" in {
-      
+
     }
   }
 }

@@ -34,22 +34,22 @@ object TestData {
 
   val ice724 = Train(
     TrainInfo.InterCityExpress(724),
-    Vector(
+    Schedule(Vector(
       ice724MunichTime -> munich,
       ice724NurembergTime -> nuremberg,
       ice724FrankfurtTime -> frankfurt,
       ice724CologneTime -> cologne
-    )
+    ))
   )
 
   val ice726 = Train(
     TrainInfo.InterCityExpress(726),
-    Vector(
+    Schedule(Vector(
       ice726MunichTime -> munich,
       ice726NurembergTime -> nuremberg,
       ice726FrankfurtTime -> frankfurt,
       ice726CologneTime -> essen
-    )
+    ))
   )
 
   val hopMunichNuremberg724 = Hop(munich, nuremberg, ice724)

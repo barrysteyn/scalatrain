@@ -7,13 +7,13 @@ package com.typesafe.training.scalatrain
 import scala.collection.immutable.Seq
 
 sealed abstract class TrainInfo {
-  
+
   def number: Int
 }
 
-sealed case class Schedule(timeTable : Seq[(Time, Station)], day : String = "All", exceptions : Set[java.util.Date] = Set()) {
+sealed case class Schedule(timeTable: Seq[(Time, Station)], day: String = "All", exceptions: Set[java.util.Date] = Set()) {
   //TODO add requires that ensures days are valid (e.g. Mon, Tue etc)	
-  def size : Int = timeTable.size
+  def size: Int = timeTable.size
 }
 
 case class Train(info: TrainInfo, schedule: Schedule) {
@@ -27,8 +27,8 @@ case class Train(info: TrainInfo, schedule: Schedule) {
 
   val backToBackStations: List[(Station, Station)] =
     stations zip stations.tail toList
-  
-  override def toString() : String = "$info.number"
+
+  override def toString(): String = "$info.number"
 }
 
 object TrainInfo {
